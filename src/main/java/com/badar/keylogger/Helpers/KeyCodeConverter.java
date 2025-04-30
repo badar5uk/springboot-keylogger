@@ -33,7 +33,7 @@ public class KeyCodeConverter {
         KEY_NAMES.put(18, "[ALT]");
         KEY_NAMES.put(20, "[CAPSLOCK]");
         KEY_NAMES.put(27, "[ESC]");
-        KEY_NAMES.put(32, "[SPACE]");
+        KEY_NAMES.put(32, " ");
         KEY_NAMES.put(37, "[LEFT]");
         KEY_NAMES.put(38, "[UP]");
         KEY_NAMES.put(39, "[RIGHT]");
