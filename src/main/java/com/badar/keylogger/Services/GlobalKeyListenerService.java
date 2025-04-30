@@ -20,19 +20,22 @@ public class GlobalKeyListenerService {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
                     if (wParam.intValue() == WinUser.WM_KEYDOWN) {
-                        String keypressed = KeyCodeConverter.getKeyName(info.vkCode);
+                        // Track shift state
+                        if (info.vkCode == 160 || info.vkCode == 161) {
+                            shiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
+                            String shiftType = (info.vkCode == 160) ? "[LSHIFT]" : "[RSHIFT]";
+                            String action = shiftPressed ? "Pressed" : "Released";
+                            System.out.println(shiftType + " " + action);
+                        }
+                        if(wParam.intValue() == WinUser.WM_KEYDOWN && !(info.vkCode == 160 || info.vkCode == 161)){
+                        String keypressed = KeyCodeConverter.getKeyName(info.vkCode, shiftPressed);
                         storedInput.append(keypressed);
                         System.out.println(storedInput);
                         System.out.println("Key pressed: " + keypressed);
                     }
+                    }
                 }
-                // CORRECT: Use Pointer.peer to get the native long value
-                return user32.CallNextHookEx(
-                        hHook,
-                        nCode,
-                        wParam,
-                        new WinDef.LPARAM(Pointer.nativeValue(info.getPointer()))
-                );
+                return user32.CallNextHookEx(hHook, nCode, wParam, new WinDef.LPARAM(Pointer.nativeValue(info.getPointer())));
             }
         };
 

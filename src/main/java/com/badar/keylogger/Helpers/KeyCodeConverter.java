@@ -42,6 +42,8 @@ public class KeyCodeConverter {
         KEY_NAMES.put(46, "[DELETE]");
         KEY_NAMES.put(91, "[WIN]");
         KEY_NAMES.put(144, "[NUMLOCK]");
+        KEY_NAMES.put(160, "[LSHIFT]");
+        KEY_NAMES.put(161, "[RSHIFT]");
         KEY_NAMES.put(186, ";");
         KEY_NAMES.put(187, "=");
         KEY_NAMES.put(188, ",");
