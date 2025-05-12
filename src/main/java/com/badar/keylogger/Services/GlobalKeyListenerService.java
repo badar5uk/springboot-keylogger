@@ -55,4 +55,8 @@ public class GlobalKeyListenerService {
 
         user32.UnhookWindowsHookEx(hHook);
     }
+
+    public void stopLogger(){
+
+    }
 }
