@@ -5,96 +5,92 @@ import java.util.Map;
 
 public class KeyCodeConverter {
 
-    //store key values into a Map
-    private static final Map<Integer, String> KEY_NAMES = new HashMap<>();
-
+    private static final Map<Integer, String[]> KEY_MAP = new HashMap<>();
     static {
-        // Alphabet keys
+        // Numbers (top row)
+        KEY_MAP.put(48, new String[]{"0", ")"});
+        KEY_MAP.put(49, new String[]{"1", "!"});
+        KEY_MAP.put(50, new String[]{"2", "@"});
+        KEY_MAP.put(51, new String[]{"3", "#"});
+        KEY_MAP.put(52, new String[]{"4", "$"});
+        KEY_MAP.put(53, new String[]{"5", "%"});
+        KEY_MAP.put(54, new String[]{"6", "^"});
+        KEY_MAP.put(55, new String[]{"7", "&"});
+        KEY_MAP.put(56, new String[]{"8", "*"});
+        KEY_MAP.put(57, new String[]{"9", "("});
+
+        // Alphabet (A-Z)
         for (int i = 65; i <= 90; i++) {
-            KEY_NAMES.put(i, String.valueOf((char) i));
+            char lower = (char)(i + 32);
+            KEY_MAP.put(i, new String[]{String.valueOf(lower), String.valueOf((char)i)});
         }
 
-        // Numbers (top row)
-        for (int i = 48; i <= 57; i++) {
-            KEY_NAMES.put(i, String.valueOf((char) i));
-        }
+        // Numpad numbers
+        KEY_MAP.put(96, new String[]{"0", "0"});
+        KEY_MAP.put(97, new String[]{"1", "1"});
+        KEY_MAP.put(98, new String[]{"2", "2"});
+        KEY_MAP.put(99, new String[]{"3", "3"});
+        KEY_MAP.put(100, new String[]{"4", "4"});
+        KEY_MAP.put(101, new String[]{"5", "5"});
+        KEY_MAP.put(102, new String[]{"6", "6"});
+        KEY_MAP.put(103, new String[]{"7", "7"});
+        KEY_MAP.put(104, new String[]{"8", "8"});
+        KEY_MAP.put(105, new String[]{"9", "9"});
+
+        // Special characters
+        KEY_MAP.put(32, new String[]{" ", " "});  // Space
+        KEY_MAP.put(13, new String[]{"[ENTER]", "[ENTER]"});  // Enter
+        KEY_MAP.put(8, new String[]{"[BACKSPACE]", "[BACKSPACE]"});  // Backspace
+        KEY_MAP.put(9, new String[]{"[TAB]", "[TAB]"});  // Tab
+        KEY_MAP.put(27, new String[]{"[ESC]", "[ESC]"});  // Escape
+        KEY_MAP.put(46, new String[]{"[DEL]", "[DEL]"});  // Delete
+        KEY_MAP.put(45, new String[]{"[INS]", "[INS]"});  // Insert
+        KEY_MAP.put(36, new String[]{"[HOME]", "[HOME]"});  // Home
+        KEY_MAP.put(35, new String[]{"[END]", "[END]"});  // End
+        KEY_MAP.put(33, new String[]{"[PGUP]", "[PGUP]"});  // Page Up
+        KEY_MAP.put(34, new String[]{"[PGDN]", "[PGDN]"});  // Page Down
+
+        // Arrow keys
+        KEY_MAP.put(37, new String[]{"[LEFT]", "[LEFT]"});  // Left
+        KEY_MAP.put(38, new String[]{"[UP]", "[UP]"});  // Up
+        KEY_MAP.put(39, new String[]{"[RIGHT]", "[RIGHT]"});  // Right
+        KEY_MAP.put(40, new String[]{"[DOWN]", "[DOWN]"});  // Down
 
         // Function keys
-        for (int i = 112; i <= 123; i++) { // F1-F12
-            KEY_NAMES.put(i, "F" + (i - 111));
+        for (int i = 112; i <= 123; i++) {  // F1-F12
+            KEY_MAP.put(i, new String[]{"[F" + (i-111) + "]", "[F" + (i-111) + "]"});
         }
 
-        // Special keys
-        KEY_NAMES.put(8, "[BACKSPACE]");
-        KEY_NAMES.put(9, "[TAB]");
-        KEY_NAMES.put(13, "[ENTER]");
-        KEY_NAMES.put(16, "[SHIFT]");
-        KEY_NAMES.put(17, "[CTRL]");
-        KEY_NAMES.put(18, "[ALT]");
-        KEY_NAMES.put(20, "[CAPSLOCK]");
-        KEY_NAMES.put(27, "[ESC]");
-        KEY_NAMES.put(32, " ");
-        KEY_NAMES.put(37, "[LEFT]");
-        KEY_NAMES.put(38, "[UP]");
-        KEY_NAMES.put(39, "[RIGHT]");
-        KEY_NAMES.put(40, "[DOWN]");
-        KEY_NAMES.put(45, "[INSERT]");
-        KEY_NAMES.put(46, "[DELETE]");
-        KEY_NAMES.put(91, "[WIN]");
-        KEY_NAMES.put(144, "[NUMLOCK]");
-        KEY_NAMES.put(160, "[LSHIFT]");
-        KEY_NAMES.put(161, "[RSHIFT]");
-        KEY_NAMES.put(186, ";");
-        KEY_NAMES.put(187, "=");
-        KEY_NAMES.put(188, ",");
-        KEY_NAMES.put(189, "-");
-        KEY_NAMES.put(190, ".");
-        KEY_NAMES.put(191, "/");
-        KEY_NAMES.put(192, "`");
-        KEY_NAMES.put(219, "[");
-        KEY_NAMES.put(220, "\\");
-        KEY_NAMES.put(221, "]");
-        KEY_NAMES.put(222, "'");
-    }
+        // Modifier keys
+        KEY_MAP.put(16, new String[]{"[SHIFT]", "[SHIFT]"});  // Shift
+        KEY_MAP.put(17, new String[]{"[CTRL]", "[CTRL]"});  // Ctrl
+        KEY_MAP.put(18, new String[]{"[ALT]", "[ALT]"});  // Alt
+        KEY_MAP.put(91, new String[]{"[WIN]", "[WIN]"});  // Windows key
+        KEY_MAP.put(20, new String[]{"[CAPSLOCK]", "[CAPSLOCK]"});
 
-    public static String getKeyName(int vkCode) {
-        return KEY_NAMES.getOrDefault(vkCode, "VK_" + vkCode);
-    }
+        // Punctuation
+        KEY_MAP.put(186, new String[]{";", ":"});  // ;:
+        KEY_MAP.put(187, new String[]{"=", "+"});  // =+
+        KEY_MAP.put(188, new String[]{",", "<"});  // ,<
+        KEY_MAP.put(189, new String[]{"-", "_"});  // -_
+        KEY_MAP.put(190, new String[]{".", ">"});  // .>
+        KEY_MAP.put(191, new String[]{"/", "?"});  // /?
+        KEY_MAP.put(192, new String[]{"`", "~"});  // `~
+        KEY_MAP.put(219, new String[]{"[", "{"});  // [{
+        KEY_MAP.put(220, new String[]{"\\", "|"});  // \|
+        KEY_MAP.put(221, new String[]{"]", "}"});  // ]}
+        KEY_MAP.put(222, new String[]{"'", "\""});  // '"
+    };
 
     public static String getKeyName(int vkCode, boolean shiftPressed) {
-        String base = KEY_NAMES.get(vkCode);
-
-        if (base == null) {
-            return "VK_" + vkCode;
-        }
-
-        // Handle shift modifications
-        if (shiftPressed) {
-            switch (vkCode) {
-                case 48: return ")";
-                case 49: return "!";
-                case 50: return "@";
-                case 51: return "#";
-                case 52: return "$";
-                case 53: return "%";
-                case 54: return "^";
-                case 55: return "&";
-                case 56: return "*";
-                case 57: return "(";
-                case 186: return ":";
-                case 187: return "+";
-                case 188: return "<";
-                case 189: return "_";
-                case 190: return ">";
-                case 191: return "?";
-                case 192: return "~";
-                case 219: return "{";
-                case 220: return "|";
-                case 221: return "}";
-                case 222: return "\"";
+        String[] mappings = KEY_MAP.get(vkCode);
+        if (mappings != null) {
+            // For non-alphabetic keys that shouldn't be affected by shift
+            if (mappings[0].startsWith("[") && mappings[0].endsWith("]")) {
+                return mappings[0];
             }
+            return shiftPressed ? mappings[1] : mappings[0];
         }
-
-        return base;
+        return "";  // Unknown key code
     }
 }
