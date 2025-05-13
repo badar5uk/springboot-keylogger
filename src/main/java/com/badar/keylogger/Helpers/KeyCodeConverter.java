@@ -19,7 +19,7 @@ public class KeyCodeConverter {
         KEY_MAP.put(56, new String[]{"8", "*"});
         KEY_MAP.put(57, new String[]{"9", "("});
 
-        // Alphabet (A-Z)
+        // Alphabet (A-Z) - now properly handling case
         for (int i = 65; i <= 90; i++) {
             char lower = (char)(i + 32);
             KEY_MAP.put(i, new String[]{String.valueOf(lower), String.valueOf((char)i)});
@@ -82,15 +82,29 @@ public class KeyCodeConverter {
         KEY_MAP.put(222, new String[]{"'", "\""});  // '"
     };
 
+//    private boolean isCapsLockOn() {
+//        // 0x0001 checks the toggle state (1 = on, 0 = off)
+//        return (GlobalKeyListenerService.User32Ex.INSTANCE.GetKeyState(WinUser.VK_SHIFT) & 0x0001) != 0;
+//    }
+
     public static String getKeyName(int vkCode, boolean shiftPressed) {
         String[] mappings = KEY_MAP.get(vkCode);
         if (mappings != null) {
-            // For non-alphabetic keys that shouldn't be affected by shift
+            // For non-alphabetic keys
             if (mappings[0].startsWith("[") && mappings[0].endsWith("]")) {
                 return mappings[0];
             }
+
+            // Handle alphabetic characters (A-Z)
+            if (vkCode >= 65 && vkCode <= 90) {
+//                boolean capsLockOn = (GlobalKeyListenerService.user32.GetKeyState(WinUser.VK_SHIFT) & 0x0001) != 0;
+                boolean shouldUppercase = shiftPressed; // XOR operation
+                return shouldUppercase ? mappings[1] : mappings[0];
+            }
+
+            // For all other keys
             return shiftPressed ? mappings[1] : mappings[0];
         }
-        return "";  // Unknown key code
+        return "";
     }
 }
