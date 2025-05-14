@@ -12,6 +12,12 @@ You can simply run the jar file using the java -jar command and the output will 
 
 ### PLEASE USE THIS ETHICALLY AND RESPONSIBLY
 
+- Obtain explicit consent before monitoring any system
+
+- Check local regulations
+
+- Never deploy on systems you don't own or have permission to monitor
+
 This project was done just as a practice and for me to learn new conecpts
 
 ## Features
@@ -32,4 +38,10 @@ mvn clean install
 or using the maven wrapper like so
 ```
 ./mvnw clean install
+```
+
+
+Then you can run using the following command:
+```
+java -jar target/keylogger-0.0.1-SNAPSHOT.jar
 ```
