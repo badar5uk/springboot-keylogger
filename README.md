@@ -29,7 +29,7 @@ This project was done just as a practice and for me to learn new conecpts
 
 ## Implementation (how to make it work)
 
-For you to run the jar and run it, you first need to adjust the GlobalKeyListenerService file, you need to change FILE_PATH to where youw want to generate the file ( including the file_name.txt)
+For you to compile and run the jar, you first need to adjust the GlobalKeyListenerService file, you need to change FILE_PATH and include the path of where you want to generate the file ( including the file_name.txt)
 ```
 File file = new File(System.getenv("FILE_PATH"));
 ```
