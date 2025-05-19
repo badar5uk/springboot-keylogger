@@ -4,7 +4,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.5-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
-This is a simple Windows keylogger implementation using Spring Boot and JNA (Java Native Access) that can log and capture keyboard inputs.
+This is a simple Windows keylogger implementation using Spring Boot and JNA (Java Native Access) that can log and capture keyboard inputs. this will not work during UAC prompts
 
 You can simply run the jar file using the java -jar command and the output will be stored as a text file ( You will need to change the path of the file in the GlobalKeyListenerService)
 
@@ -28,11 +28,6 @@ This project was done just as a practice and for me to learn new conecpts
 - **Real-time output** of captured keystrokes
 
 ## Implementation (how to make it work)
-
-For you to compile and run the jar, you first need to adjust the GlobalKeyListenerService file, you need to change FILE_PATH and include the path of where you want to generate the file ( including the file_name.txt)
-```
-File file = new File(System.getenv("FILE_PATH"));
-```
 
 You can generate a jar file using the following
 
