@@ -81,9 +81,7 @@ public class GlobalKeyListenerService {
                         String pattern = "MM-dd-yyyy";
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                         String fileName = "log_" + simpleDateFormat.format(new Date()) + ".txt";
-                        System.out.println(fileName);
                         File file = new File(fileName);
-                        Path filePath = Paths.get(fileName);
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
                             writer.append(storedInput);
                         } catch (IOException e) {
