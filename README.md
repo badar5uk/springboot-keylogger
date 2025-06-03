@@ -4,9 +4,9 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.5-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 
-This is a simple Windows keylogger implementation using Spring Boot and JNA (Java Native Access) that can log and capture keyboard inputs. this will not work during UAC prompts
+This is a simple Windows keylogger implementation using Spring Boot and JNA (Java Native Access) that can log and capture keyboard inputs, The application also utilizes Launch4j to wrap the jar as an .exe file that can e executed, this was named as eyecandy.exe this will not work during UAC prompts unless you elevate the privelege first.
 
-You can simply run the jar file using the java -jar command and the output will be stored as a text file ( You will need to change the path of the file in the GlobalKeyListenerService)
+You can simply run the jar file using the java -jar command and the output will be stored as a text file in the same directory where you ran it, you can also run the .exe file that is generated
 
 ## Important Notice!!
 
@@ -29,19 +29,17 @@ This project was done just as a practice and for me to learn new conecpts
 
 ## Implementation (how to make it work)
 
-You can generate a jar file using the following
+You can generate the jar and .exe file using the following
 
 ```
-mvn clean install
+mvn clean package
 ```
-
 or using the maven wrapper like so
 ```
-./mvnw clean install
+mvnw clean package
 ```
-
-
-Then you can run using the following command:
+The file would then be generated in the /target folder, you can run the jar file using the following:
 ```
-java -jar target/keylogger-0.0.1-SNAPSHOT.jar
+java -jar target/eyecandy.jar
 ```
+Or directly run the .exe file
